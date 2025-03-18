@@ -8,7 +8,8 @@
 
 //Reference:
 //ChatGPT-help me fix up some logic error that I can't understand. I've marked them out.
-//(p5.js Web Editor | blossom flower w/ bee, no date). Avaliable at: https://editor.p5js.org/gmpfood/sketches/A21LyrTya - I build up my flower based on this one!! Thanks for help stranger TT
+//(p5.js Web Editor | blossom flower w/ bee, no date). Avaliable at: https://editor.p5js.org/gmpfood/sketches/A21LyrTya
+//I build up my flower based on this one!! Thanks for help stranger TT
 
 let audioContextOn = false;
 let backgroundSound;//muuuussssic
@@ -22,110 +23,6 @@ function preload() {
   flowerSound = loadSound('sound/long.mp3');
 }
 
-/////////////////Fragments position/////////////////
-class HideFragments {
-  constructor(_x, _y) {
-    this.PosX = _x;
-    this.PosY = _y;
-    this.moonSize = windowHeight / 4 * 3;
-    // this.moonSize = windowHeight / 4;
-    this.length = 100;
-  }
-
-  update() {
-    //////////ChatGPT teachs me this because the random position always be outside of the moon.
-    // 随机生成一个在圆内的点 Randomly produce a dot inside the moon circle
-    let angle = random(TWO_PI); // 0 到 2π 的随机角度
-    let r = sqrt(random(1)) * this.moonSize / 2; // 保持点均匀分布在圆内 Keep dots evenly distribute in circle
-    // let r = sqrt(random(1)) * this.moonSize; // 保持点均匀分布在圆内 Keep dots evenly distribute in circle
-    this.PosX = windowWidth / 2 + r * cos(angle);
-    this.PosY = windowHeight / 2 + r * sin(angle);
-  }
-
-  display() {
-    push();
-    noFill();
-    noStroke();//difficulty!
-    square(this.PosX, this.PosY, this.length);
-
-    Fx = this.PosX;//for mousePressed
-    Fy = this.PosY;
-    Flen = this.length;
-    centerFrag = createVector(Fx + this.length / 2, Fy + this.length / 2);
-    pop();
-  }
-}
-
-//Flowe variables
-let delay;//the gap between click and flower
-let delayNum = 150;//delay time 
-let delayOn = false;
-let fillOpacity = 100;
-let strokeOpacity;
-let flowerW;//width
-let flowerX;
-let flowerY;
-let flowerR;//color
-let flowerG;
-let flowerB;
-let flowerArray = [];
-let petal;
-
-/////////////////////////Flowers/////////////////////////////
-class Flower {
-  constructor(_x, _y) {
-    this.posX = _x;
-    this.posY = _y;
-    this.opacity = 0;
-    this.width = flowerW;
-    this.height = 0;
-    this.time = 0;
-    this.deltaTime = 0;
-    this.R = flowerR;
-    this.G = flowerG;
-    this.B = flowerB;
-    this.petal = petal;
-  }
-  display() {
-    //time control the flower height and opacity
-    this.time = this.time + 1;
-    this.height = this.time * 0.1;
-    this.opacity = this.time * 0.1;
-    let dt = deltaTime * 0.001;
-    this.deltaTime += dt;
-    let sinTime = sin(this.deltaTime);
-    let flowerBreathing = map(sinTime, -1, 1, 30, 60);
-
-    //flower breathing
-    if (this.height > 30) {
-      this.height = flowerBreathing;
-    }
-
-    //flower opacity
-    if (this.opacity > fillOpacity) {
-      this.opacity = fillOpacity;
-    }
-    strokeOpacity = this.opacity - 30;
-
-    //blossom flower data
-    push();
-
-    translate(this.posX, this.posY);
-    rotate(frameCount * 0.01);
-    stroke(255, 255, 255, strokeOpacity);//white
-    strokeWeight(15);
-    //flower color
-    fill(this.R, this.G, this.B, 90);
-    ellipseMode(CORNER);
-    //petal
-    for (let i = 0; i < this.petal; i++) {
-      ellipse(0, 0, this.width, this.height);
-      rotate(TWO_PI / this.petal);
-    }
-    pop();
-
-  }
-}
 
 
 //for mousePressed "simple" button position
@@ -133,15 +30,6 @@ let Flen;//equal this.length
 let Fx;//equal this.PosX
 let Fy;//equal this.PosY
 let centerFrag;
-
-//fragments array
-let Fragments = [];//random position array
-let fragPos;//class display
-let letter = [];//birthday letter array
-
-//letter position
-let letterPosX;
-let letterPosY;//where the letter shows
 
 //Eatting array
 let EatX = [];
@@ -175,7 +63,7 @@ function setup() {
 
   backgroundSound.loop();//constantly play from starting
 
-  letter = ["     ", "You eat a piece of moon, a piece of time.", "You also plant a fragment flower at the same time.", "The flower will blossom, breath and fill up the moon\nfiil up the time. ", "Your effect is what your cause.", "And your cause is also what your effect.", "You make what you choose\nand choose what you make", "in the river of time"];//mythology
+  letter = ["     ", "You eat a pice of moon, a piece of time.", "You also plant a fragment flower at the same time.", "The flower will blossom, breath and fill up the moon\nfiil up the time. ", "Your effect is your cause.", "And your cause is also your effect.", "You make what you choose\nand choose what you make", "in the river of time"];//mythology
   // for loop to add new position into position array
   for (let num = 0; num < letter.length; num++) {
     /////////ChatGPT help me correct the random position out of circle
@@ -240,10 +128,6 @@ function draw() {
     }
 
     if (delay < 0) {
-      for (let index = 0; index < flowerPx.length; index++) {
-        flowerX = flowerPx[index];
-        flowerY = flowerPy[index];
-      }
       let flower = new Flower(flowerX, flowerY);
       flowerArray.push(flower);
       flowerSound.play();
@@ -273,6 +157,7 @@ function draw() {
       console.log("here");
     }
 
+    //console.log('silenceCount', silenceCount);
     guidanceX = windowWidth / 2;
     guidanceY = 50;
     push();
@@ -280,7 +165,7 @@ function draw() {
     textSize(16);
     textAlign(CENTER);//super silly method about showing guidance when mouse is not moving
     fill(255, 255, 255, silenceCount); //white
-    text('Move your mouse to find something!\nClick when you think it is ripe.', guidanceX, guidanceY);
+    text('Move your mouse to find something!\nClick when you think the dog is fully black.', guidanceX, guidanceY);
     pop();
 
 
@@ -355,7 +240,7 @@ function draw() {
 }
 
 let flowerPx = [];
-let flowerPy = [];//to schedual the record of mouse click history and avoid replacing flower position within delay time
+let flowerPy = [];//to schedual the record of mouse click history and avoid replacing flower position within delay
 
 function mousePressed() {
   //get the permission
@@ -380,8 +265,8 @@ function mousePressed() {
     eatSound.play();
 
     //flower for filling the eating notch
-    flowerPx.push(mouseX);
-    flowerPy.push(mouseY);
+    flowerX = mouseX;
+    flowerY = mouseY;
     flowerW = random(5, 50);//random width
     flowerR = random(180, 255);//random color
     flowerG = random(180, 255);
